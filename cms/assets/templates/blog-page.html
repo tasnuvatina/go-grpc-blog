@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <link rel="stylesheet" href="/static/cms/assets/css/tailwind.css"> -->
+    <style>
+        .react {
+            transition: transform .2s;
+        }
+
+        .react:hover {
+            transform: scale(1.3);
+        }
+
+        .marquee {
+            width: 100%;
+            margin: 0 auto;
+            white-space: nowrap;
+            overflow: hidden;
+            height: 61px;
+            background: #000000;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            align-items: center;
+        }
+
+        .marquee .text {
+            display: inline-block;
+            padding-left: 4.4rem;
+            text-indent: 0;
+            animation: marquee 12s linear infinite;
+            font-weight: 500;
+            font-size: 1.4rem;
+            line-height: 125%;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            color: #f2f2f2;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(-100%, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!------------------navbar section------------------------->
+    <section>
+        <div class="flex flex-wrap items-center justify-between p-12 border-b">
+            <div class="w-full lg:w-1/2"><a href="/"><img class="h-9 mx-auto lg:mx-0"
+                        src="/static/cms/assets/images/nordic-rose-log.svg" alt=""></a></div>
+            <div class="flex items-center w-full justify-center lg:justify-end lg:w-1/2">
+                {{if ne .UserData.ID 0}}
+                <div class="px-6 uppercase"><a href="/create">Write Blog</a></div>
+                <div class="px-6 uppercase"><a href="javascipt:;">My Blogs</a></div>
+                <div class="px-6 uppercase"><a href="/logout">Logout</a></div>
+
+                {{else}}
+                <div class="px-6 uppercase"><a href="/signup">Sing up</a></div>
+                <div class="px-6 uppercase"><a href="/signin">Log In</a></div>
+                {{end}}
+            </div>
+        </div>
+    </section>
+    <!----------------------big article section------------------------------->
+    <section>
+        <div class=" container mx-auto">
+            <div class=" pt-16 pb-11"><img class="mx-auto w-4/5 lg:w-1/2"
+                    src="/static/cms/assets/images/{{.Blog.PictureString}}" alt=""></div>
+            <h2 class=" font-bold text-5xl text-center lg:w-4/6 mx-auto py-8">{{.Blog.Title}}</h2>
+            <div class="w-7/12 mx-auto flex flex-wrap justify-center lg:justify-between  pb-8">
+                <div class=" lg:w-1/2 text-center lg:text-left">
+                    <p class=" text-xl"><span class=" font-bold">Author : </span><span>{{.Blog.AuthorName}}</span></p>
+                </div>
+                <div class="w-full lg:w-1/2 text-center lg:text-right">
+                    <p><span class=" font-bold">Written on: </span>{{.Blog.CreatedAt}}</p>
+                    {{if ne .Blog.UpdateAt ""}}
+                    <p><span class=" font-bold">Edited on: </span>{{.Blog.UpdateAt}}</p>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    </section>
+    {{if eq .UserData.ID .Blog.AuthorID}}
+    <section>
+        <div class="container mx-auto  py-6 w-7/12 mb-16">
+            <div class="w-full flex justify-between">
+                <div class="w-1/2">
+                    <div class="w-full flex">
+                        <div class="text-center">
+                            <a class="px-8 py-6 bg-black rounded-sm text-lg text-white font-bold"
+                                href="/blog/{{.Blog.ID}}/edit">Edit Blog</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-1/2">
+                    <div class="w-full flex justify-end">
+                        <div class="text-center">
+                            <a class="px-8 py-6 bg-red-900 rounded-sm text-lg text-white font-bold"
+                                href="/blog/{{.Blog.ID}}/delete">Delete Blog</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {{end}}
+    <!-------------------Blog Description---------------------->
+    <section>
+        <div class="container mx-auto border-t py-16 w-7/12 ">
+            <h3 class="text-center text-4xl font-bold mb-6">Blog</h3>
+            <div class="w-full flex flex-wrap items-center justify-between">
+                <p class=" text-justify" id="description">{{.Blog.Description}}</p>
+
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container mx-auto border-t border-b py-6 w-7/12 mb-6">
+            <div class="w-full flex justify-between">
+                <div class="w-1/2">
+                    <div class="w-full flex gap-x-12">
+                        <div class="text-center">
+                            {{if .HasUpvoted}}
+                            <div><a href="/blog/{{.Blog.ID}}/{{.UserData.ID}}/upvote"><img class="w-10 pb-1 react"
+                                        src="/static/cms/assets/images/like-color.png" alt=""></a></div>
+                            {{else}}
+                            <div><a href="/blog/{{.Blog.ID}}/{{.UserData.ID}}/upvote"><img class="w-10 pb-1 react"
+                                        src="/static/cms/assets/images/like.png" alt=""></a></div>
+                            {{end}}
+
+                            <div>{{.Blog.UpvoteCount}}</div>
+                        </div>
+                        <div class="text-center">
+                            {{if .HasDownVoted}}
+                            <div><a href="/blog/{{.Blog.ID}}/{{.UserData.ID}}/downvote"><img class="w-10 pb-1 react"
+                                        src="/static/cms/assets/images/dislike-color.png" alt=""></a></div>
+                            {{else}}
+                            <div><a href="/blog/{{.Blog.ID}}/{{.UserData.ID}}/downvote"><img class="w-10 pb-1 react"
+                                        src="/static/cms/assets/images/dislike.png" alt=""></a></div>
+                            {{end}}
+                            <div>{{.Blog.DownvoteCount}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-1/2">
+                    <div class="w-full flex justify-end">
+                        <div class="text-center">
+                            <div class=" cursor-pointer"><img class="w-10 pb-1 react"
+                                    src="/static/cms/assets/images/comment.png" alt=""></div>
+                            <div>{{.Blog.CommentsCount}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!------------------write comments--------------------------->
+    <section>
+        <div class="container mx-auto  p-6 w-7/12">
+            <div class="">
+
+                <div class="space-y-4">
+
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-3">
+                            <div
+                                class="mt-2 rounded-full w-8 h-8 sm:w-10 sm:h-10 bg-black flex items-center justify-center">
+                                <h2 class="name-letters uppercase text-white text-xl font-bold"></h2>
+                            </div>
+                        </div>
+                        <div class="flex-1 px-4 py-2 sm:px-6 sm:py-4 leading-relaxed">
+                            <form method="post" action="/blog/{{.Blog.ID}}/{{.UserData.ID}}/comment"
+                                class="flex justify-between flex-wrap" style="align-items: center">
+                                <div class="w-1/10 ml-2"><strong class="usernames">{{.UserData.UserName}}</strong></div>
+                                <div class="w-9/12 ml-2"><input name="Content" type="text"
+                                        class=" w-full border rounded px-2 py-4 " required></div>
+                                <div class="w-1/12"><button type="submit" class="  "><img class="w-12"
+                                            src="/static/cms/assets/images/right-arrow-blue.png" alt=""></button></div>
+                            </form>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--------------------comments---------------------------------------->
+    <section>
+        <div class="container mx-auto border-t border-b py-6 w-7/12 mb-16 ">
+            <div class="">
+                <h3 class="mb-4 text-lg font-semibold text-gray-900">Comments</h3>
+                {{range .Comments}}
+                <div class="space-y-4 my-2">
+
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-3">
+                            <div
+                                class="mt-2 rounded-full w-8 h-8 sm:w-10 sm:h-10 bg-black flex items-center justify-center">
+                                <h2 class="name-letters uppercase text-white text-xl font-bold"></h2>
+                            </div>
+                        </div>
+                        <div class="flex-1 border rounded-lg px-4 py-2 sm:px-6 sm:py-4 leading-relaxed">
+                            <strong class="usernames">{{.UserName}}</strong> <span
+                                class="text-xs text-gray-400">{{.CommentedAt}}</span>
+                            <p class="text-sm mt-1">
+                                {{.Content}}
+                            </p>
+                        </div>
+                    </div>
+
+
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </section>
+    <!---------------------------footer--------------------------------->
+    <section>
+        <div class=" bg-black py-9">
+            <!------------------------------------------------->
+            <section class="marquee">
+                <h4 class="text">
+                    Nordic rose - The Blog of Champions.
+                </h4>
+                <h4 class="text">
+                    Nordic rose - The Blog of Champions.
+                </h4>
+                <h4 class="text">
+                    Nordic rose - The Blog of Champions.
+                </h4>
+                <h4 class="text">
+                    Nordic rose - The Blog of Champions.
+                </h4>
+                <h4 class="text">
+                    Nordic rose - The Blog of Champions.
+                </h4>
+                <h4 class="text">
+                    Nordic rose - The Blog of Champions.
+                </h4>
+                <h4 class="text">
+                    Nordic rose - The Blog of Champions.
+                </h4>
+            </section>
+            <!-------------------------------------->
+            <div class="flex justify-center pt-28 pb-6">
+                <img class="h-7" src="/static/cms/assets/images/logo-white.svg" alt="">
+            </div>
+            <p class="text-white text-center w-2/6 mx-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Duis eu velit tempus erat egestas efficitur. In hac habitasse platea dictumst. Fusce a nunc eget ligula
+                suscipit finibus. </p>
+            <div class="flex items-center justify-center py-9">
+                <div class=" border-b-2 border-white mx-6 py-2 text-center">
+                    <a class="text-white font-medium" href="javascript:;">Twitter</a>
+                </div>
+                <div class=" border-b-2 border-white mx-6 py-2 text-center">
+                    <a class="text-white font-medium" href="javascript:;">LinkedIn</a>
+                </div>
+                <div class=" border-b-2 border-white mx-6 py-2 text-center">
+                    <a class="text-white font-medium" href="javascript:;">RSS</a>
+                </div>
+            </div>
+            <div class=" text-center text-white font-medium pt-8">
+                <p>© 2012–2020 Nordic Rose Co.</p>
+                <p> All rights reserved. </p>
+            </div>
+        </div>
+    </section>
+</body>
+
+<script>
+    let nameLetters = document.getElementsByClassName("name-letters")
+    let usernames = document.getElementsByClassName("usernames")
+
+    for (let i = 0; i < usernames.length; i++) {
+        let usernameValue = usernames[i].innerHTML;
+        let letter = usernameValue.substring(0, 1)
+        nameLetters[i].innerHTML = letter
+
+    }
+
+    let descriptionArray = document.getElementById("description").innerHTML.split(".")
+    descriptionArray.forEach((element, i) => {
+        if (i % 3 == 0) {
+            descriptionArray[i] = `${element}<br>`
+        }
+    })
+    let newdescription = descriptionArray.join("")
+    console.log(newdescription)
+    document.getElementById("description").innerHTML = ""
+    document.getElementById("description").innerHTML = newdescription
+</script>
+
+</html>
